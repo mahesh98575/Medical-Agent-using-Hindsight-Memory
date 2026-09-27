@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, ShieldAlert, FileText, CheckCircle2, Calendar, User, Database, ExternalLink } from 'lucide-react';
+import { X, ShieldAlert, FileText, CheckCircle2, Calendar, User, Database } from 'lucide-react';
 import { EvidenceDetail } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Badge } from '@/components/ui/Badge';
@@ -14,15 +14,31 @@ interface EvidenceDrawerProps {
 }
 
 export function EvidenceDrawer({ isOpen, onClose, evidence }: EvidenceDrawerProps) {
+  React.useEffect(() => {
+    if (isOpen) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen || !evidence) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-xs flex justify-end transition-opacity">
+    <div
+      className="fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-xs flex justify-end transition-opacity"
+      onClick={onClose}
+    >
       <div 
         className="w-full max-w-lg bg-white h-full shadow-2xl flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="evidence-drawer-title"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="p-6 border-b border-slate-200 bg-slate-50/75 flex items-start justify-between">

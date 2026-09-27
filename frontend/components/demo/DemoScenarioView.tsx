@@ -9,11 +9,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileText,
-  ShieldAlert,
-  ArrowRight,
   Database,
   Clock,
-  User,
   Brain,
 } from 'lucide-react';
 import { DemoStep, EvidenceDetail } from '@/types';

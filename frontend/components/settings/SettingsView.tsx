@@ -3,15 +3,13 @@
 import React from 'react';
 import {
   Settings,
-  ShieldCheck,
-  Server,
   Database,
   Brain,
   Cpu,
   Lock,
   CheckCircle2,
-  AlertCircle,
   RefreshCw,
+  Server,
 } from 'lucide-react';
 import { HealthStatus } from '@/types';
 import { Badge } from '@/components/ui/Badge';
@@ -41,17 +39,26 @@ export function SettingsView({ health, onRefreshHealth }: SettingsViewProps) {
           </p>
         </div>
 
-        {onRefreshHealth && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRefreshHealth}
-            className="flex items-center gap-1.5 text-xs text-slate-700"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Check Connectivity</span>
-          </Button>
-        )}
+        <div className="flex items-center gap-3">
+          {health && (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+              <Server className="w-3.5 h-3.5 text-teal-600" />
+              <span className="text-slate-500 font-medium">API:</span>
+              <span className="font-semibold text-emerald-700 capitalize">{health.status}</span>
+            </div>
+          )}
+          {onRefreshHealth && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRefreshHealth}
+              className="flex items-center gap-1.5 text-xs text-slate-700"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Check Connectivity</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Persistence & Memory Engine Status */}

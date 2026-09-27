@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AlertTriangle, ShieldAlert, CheckCircle2, FileText, UserCheck, MessageSquare, ShieldCheck, History } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, CheckCircle2, FileText, UserCheck, ShieldCheck } from 'lucide-react';
 import { ConflictRecord, EvidenceDetail } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -23,7 +23,11 @@ export function ConflictCenterView({
   const [resolvedConflicts, setResolvedConflicts] = useState<ConflictRecord[]>([]);
 
   const unresolved = conflicts.filter((c) => c.status === 'unresolved' && !resolvedConflicts.some((r) => r.id === c.id));
-  const resolved = [...conflicts.filter((c) => c.status === 'clinician_verified'), ...resolvedConflicts];
+  const resolved = Array.from(
+    new Map(
+      [...conflicts.filter((c) => c.status === 'clinician_verified'), ...resolvedConflicts].map((item) => [item.id, item])
+    ).values()
+  );
 
   const handleReviewEvidence = (conflict: ConflictRecord) => {
     onReviewEvidence({

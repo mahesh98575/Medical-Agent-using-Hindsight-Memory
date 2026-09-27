@@ -6,7 +6,6 @@ import {
   FileClock,
   Pill,
   ShieldAlert,
-  Activity,
   History,
   AlertTriangle,
   BrainCircuit,

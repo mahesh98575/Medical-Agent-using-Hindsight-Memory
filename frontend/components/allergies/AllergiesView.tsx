@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ShieldAlert, AlertTriangle, CheckCircle2, FileText, UserCheck, Shield, HelpCircle } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, FileText, UserCheck, Shield } from 'lucide-react';
 import { Allergy, ConflictRecord, EvidenceDetail } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';

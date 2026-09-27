@@ -41,7 +41,6 @@ import {
   Patient,
   EvidenceDetail,
   ConflictRecord,
-  SearchResultItem,
 } from '@/types';
 import { ArrowLeft, Brain, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -353,6 +352,13 @@ export default function DashboardPage() {
               conflicts={conflicts}
               memories={DEMO_MEMORIES}
               onReviewEvidence={handleReviewEvidence}
+              initialTab={
+                currentSection === 'symptoms'
+                  ? 'symptoms'
+                  : currentSection === 'memories'
+                  ? 'memories'
+                  : 'overview'
+              }
             />
           </div>
         )}

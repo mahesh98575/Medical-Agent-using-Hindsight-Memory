@@ -42,7 +42,7 @@ export function AppShell({
       <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 text-center text-xs font-semibold text-amber-900 flex items-center justify-center gap-2">
         <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
         <span>
-          SYNTHETIC DEMO ENVIRONMENT — All patient records, medications, and clinical histories are simulated for evaluation.
+          SYNTHETIC DEMO ENVIRONMENT — All patient records, medications, and clinical histories are simulated for clinical decision-support demonstrations.
         </span>
       </div>
 

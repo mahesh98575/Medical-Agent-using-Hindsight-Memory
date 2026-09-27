@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Pill, CheckCircle2, History, AlertCircle, FileText, Plus, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Pill, CheckCircle2, History, FileText, Plus, ShieldCheck } from 'lucide-react';
 import { Medication, EvidenceDetail } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Badge } from '@/components/ui/Badge';

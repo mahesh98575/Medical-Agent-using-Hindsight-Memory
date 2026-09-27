@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X, Pill, ShieldAlert, Activity, BrainCircuit, AlertTriangle, ArrowRight } from 'lucide-react';
 import { SearchResultItem, EvidenceDetail } from '@/types';
 import { Badge } from '@/components/ui/Badge';
@@ -73,17 +73,26 @@ export function GlobalSearchBar({
   const inputRef = useRef<HTMLInputElement>(null);
   const defaultItems = searchData || DEFAULT_SEARCH_ITEMS;
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setQuery('');
     onClose();
-  };
+  }, [onClose]);
 
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => inputRef.current?.focus(), 50);
-      return () => clearTimeout(timer);
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          handleClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
@@ -113,8 +122,14 @@ export function GlobalSearchBar({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-xs">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[550px]">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-xs"
+      onClick={handleClose}
+    >
+      <div
+        className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[550px]"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Search Input Bar */}
         <div className="p-4 border-b border-slate-200 flex items-center gap-3">
           <Search className="w-5 h-5 text-slate-400" />
@@ -200,6 +215,28 @@ export function GlobalSearchBar({
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0">
+                    {onReviewEvidence && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          onReviewEvidence({
+                            memoryId: item.id,
+                            title: item.title,
+                            category: item.category,
+                            source: 'CLINICAL_SEARCH_RECORD',
+                            originalStatement: item.description || item.title,
+                            date: '2026-02-05',
+                            interactionId: 'search_trace_001',
+                            status: (item.status as EvidenceDetail['status']) || 'CURRENT',
+                            context: `Record retrieved from indexed clinical memory bank. Status: ${item.status || 'CURRENT'}.`,
+                          });
+                        }}
+                        className="px-2 py-1 rounded bg-teal-50 hover:bg-teal-100 text-teal-800 text-[11px] font-semibold transition-colors"
+                      >
+                        Evidence
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => {

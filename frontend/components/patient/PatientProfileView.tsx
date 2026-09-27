@@ -35,6 +35,7 @@ interface PatientProfileViewProps {
   conflicts: ConflictRecord[];
   memories: MemoryItem[];
   onReviewEvidence: (evidence: EvidenceDetail) => void;
+  initialTab?: ProfileTab;
 }
 
 export function PatientProfileView({
@@ -45,8 +46,11 @@ export function PatientProfileView({
   conflicts,
   memories,
   onReviewEvidence,
+  initialTab = 'overview',
 }: PatientProfileViewProps) {
-  const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
+  const [selectedTab, setSelectedTab] = useState<ProfileTab | null>(null);
+  const activeTab = selectedTab ?? initialTab;
+  const setActiveTab = (tab: ProfileTab) => setSelectedTab(tab);
 
   const currentMeds = medications.filter((m) => m.status === 'CURRENT');
   const stoppedMeds = medications.filter((m) => m.status === 'STOPPED' || m.status === 'HISTORICAL');
