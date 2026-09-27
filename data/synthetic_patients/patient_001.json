@@ -1,0 +1,50 @@
+{
+  "id": "patient_001",
+  "synthetic_label": "Demo Patient 001 (Synthetic Profile)",
+  "is_synthetic": true,
+  "age": 42,
+  "gender": "Female",
+  "primary_condition": "Mild Persistent Asthma",
+  "initial_records": {
+    "allergies": [
+      {
+        "allergen": "Penicillin",
+        "reaction": "Hives, mild wheezing",
+        "severity": "High",
+        "status": "active",
+        "reported_date": "2026-03-12"
+      }
+    ],
+    "medications": [
+      {
+        "name": "Medicine A",
+        "indication": "Asthma controller",
+        "start_date": "2026-01-15",
+        "status": "stopped",
+        "stopped_date": "2026-08-10"
+      },
+      {
+        "name": "Medicine B",
+        "indication": "Asthma maintenance inhaler",
+        "start_date": "2026-08-15",
+        "status": "current"
+      }
+    ],
+    "symptoms": [
+      {
+        "description": "Occasional morning shortness of breath",
+        "reported_date": "2026-08-12",
+        "status": "resolved"
+      }
+    ],
+    "conflicts": [
+      {
+        "type": "allergy_contradiction",
+        "record_a": "Patient reported penicillin allergy on 2026-03-12",
+        "record_b": "Patient stated 'No known drug allergies' during recent intake review",
+        "status": "unresolved",
+        "action_required": "Clinical verification required before administering any beta-lactam antibiotics"
+      }
+    ]
+  }
+}
