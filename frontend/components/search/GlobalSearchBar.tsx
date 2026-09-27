@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Pill, ShieldAlert, Activity, BrainCircuit, AlertTriangle, ArrowRight } from 'lucide-react';
-import { SearchResultItem } from '@/types';
+import { SearchResultItem, EvidenceDetail } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 
 interface GlobalSearchBarProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectResult: (section: string, result: SearchResultItem) => void;
+  onReviewEvidence?: (evidence: EvidenceDetail) => void;
   searchData?: SearchResultItem[];
 }
 
@@ -64,6 +65,7 @@ export function GlobalSearchBar({
   isOpen,
   onClose,
   onSelectResult,
+  onReviewEvidence,
   searchData,
 }: GlobalSearchBarProps) {
   const [query, setQuery] = useState('');

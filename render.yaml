@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: healthcare-memory-assistant-api
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: python -m uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: LOCAL_SQLITE_FALLBACK
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: healthcare-memory-db
+          property: connectionString
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: HINDSIGHT_BASE_URL
+        value: http://localhost:8888
+      - key: CORS_ORIGINS
+        value: '["*"]'
+
+databases:
+  - name: healthcare-memory-db
+    databaseName: healthcare_memory
+    user: healthcare_admin
+    plan: free
+    region: oregon
