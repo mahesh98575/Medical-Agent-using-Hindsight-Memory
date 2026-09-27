@@ -1,180 +1,213 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-  Activity, 
-  Brain, 
-  ShieldCheck, 
-  Clock, 
-  AlertTriangle, 
-  FileText, 
-  Database,
-  CheckCircle2,
-  Server
-} from 'lucide-react';
+import { AppShell } from '@/components/layout/AppShell';
+import { PatientSummaryCard } from '@/components/dashboard/PatientSummaryCard';
+import { OverviewCards } from '@/components/dashboard/OverviewCards';
+import { ActiveConflictCard } from '@/components/dashboard/ActiveConflictCard';
+import { MedicationSummarySection } from '@/components/dashboard/MedicationSummarySection';
+import { AllergySummarySection } from '@/components/dashboard/AllergySummarySection';
+import { RecentTimelineSection } from '@/components/dashboard/RecentTimelineSection';
+import { MemoryPreviewSection } from '@/components/dashboard/MemoryPreviewSection';
+import {
+  DEMO_PATIENT,
+  DEMO_MEDICATIONS,
+  DEMO_ALLERGIES,
+  DEMO_SYMPTOMS,
+  DEMO_CONFLICTS,
+  DEMO_TIMELINE,
+  DEMO_MEMORIES,
+} from '@/services/mockData';
 import { api } from '@/services/api';
-import { HealthStatus } from '@/types';
+import { HealthStatus, Patient } from '@/types';
+import { ArrowLeft, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
-export default function Home() {
+export default function DashboardPage() {
+  const [patient, setPatient] = useState<Patient>(DEMO_PATIENT);
+  const [currentSection, setCurrentSection] = useState<string>('dashboard');
   const [health, setHealth] = useState<HealthStatus | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [healthLoading, setHealthLoading] = useState<boolean>(true);
+  const [healthError, setHealthError] = useState<string | null>(null);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
+  // Poll or check backend health
   useEffect(() => {
-    async function fetchHealth() {
+    let isMounted = true;
+    async function checkBackend() {
       try {
         const data = await api.getHealth();
-        setHealth(data);
-        setError(null);
+        if (isMounted) {
+          setHealth(data);
+          setHealthError(null);
+        }
       } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Unable to connect to backend service');
+        if (isMounted) {
+          if (err instanceof Error) {
+            setHealthError(err.message);
+          } else {
+            setHealthError('Backend server standby');
+          }
         }
       } finally {
-        setLoading(false);
+        if (isMounted) setHealthLoading(false);
       }
     }
-    fetchHealth();
+    checkBackend();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* Top Banner: Synthetic Data Disclaimer */}
-      <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 text-center text-xs font-semibold text-amber-900 flex items-center justify-center gap-2">
-        <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-        <span>SYNTHETIC DEMO ENVIRONMENT — All patient profiles and clinical data are artificial and for testing purposes only.</span>
+  const handleLoadDemoPatient = () => {
+    setPatient(DEMO_PATIENT);
+    showFeedback('Demo Patient 001 profile and synthetic memory banks reloaded.');
+  };
+
+  const handleAddPatient = () => {
+    showFeedback('Patient onboarding workflow will be enabled in Phase 3.');
+  };
+
+  const showFeedback = (msg: string) => {
+    setFeedbackMessage(msg);
+    setTimeout(() => {
+      setFeedbackMessage(null);
+    }, 4000);
+  };
+
+  // Section placeholder view for navigation items that will be built in subsequent phases
+  const renderSectionPlaceholder = (sectionId: string) => {
+    const titles: Record<string, string> = {
+      'medical-history': 'Medical History',
+      medications: 'Medication Management',
+      allergies: 'Allergy Records & Safety',
+      symptoms: 'Symptom Tracking',
+      timeline: 'Comprehensive Medical Timeline',
+      conflicts: 'Conflict Verification Center',
+      memories: 'Hindsight Memory Explorer',
+    };
+
+    return (
+      <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-4">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">{titles[sectionId] || sectionId}</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Dedicated detail view scheduled for subsequent development phase.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentSection('dashboard')}
+            icon={<ArrowLeft className="w-3.5 h-3.5" />}
+          >
+            Back to Dashboard
+          </Button>
+        </div>
+
+        <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300 space-y-2">
+          <Clock className="w-8 h-8 text-slate-400 mx-auto" />
+          <p className="text-sm font-semibold text-slate-700">
+            {titles[sectionId]} View Under Construction
+          </p>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            Phase 2 establishes the core Healthcare Memory Assistant Dashboard. Full interactive views for this module will be implemented in subsequent phases.
+          </p>
+        </div>
       </div>
+    );
+  };
 
-      {/* Main Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-sm">
-              <Brain className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-slate-900 leading-tight">Healthcare Memory Assistant</h1>
-              <p className="text-xs text-slate-500">Persistent, Time-Aware Clinical Memory & Decision Support</p>
-            </div>
+  const currentMeds = DEMO_MEDICATIONS.filter((m) => m.status === 'CURRENT');
+  const stoppedMeds = DEMO_MEDICATIONS.filter(
+    (m) => m.status === 'STOPPED' || m.status === 'HISTORICAL'
+  );
+
+  return (
+    <AppShell
+      patient={patient}
+      health={health}
+      healthLoading={healthLoading}
+      healthError={healthError}
+      currentSection={currentSection}
+      onSelectSection={setCurrentSection}
+      conflictCount={DEMO_CONFLICTS.length}
+    >
+      <div className="space-y-6">
+        {/* Flash Feedback Banner */}
+        {feedbackMessage && (
+          <div className="p-3 bg-teal-50 border border-teal-200 text-teal-800 rounded-xl text-xs font-medium flex items-center justify-between animate-fade-in">
+            <span>{feedbackMessage}</span>
+            <button
+              onClick={() => setFeedbackMessage(null)}
+              className="text-teal-600 hover:text-teal-900 font-bold ml-2"
+            >
+              ×
+            </button>
           </div>
+        )}
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 border border-slate-200">
-              <Server className="w-3.5 h-3.5 text-slate-500" />
-              <span>Backend:</span>
-              {loading ? (
-                <span className="text-slate-400">Connecting...</span>
-              ) : health?.status === 'healthy' ? (
-                <span className="text-emerald-700 flex items-center gap-1 font-semibold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Operational
-                </span>
-              ) : (
-                <span className="text-amber-700 font-semibold" title={error || 'Backend standby'}>
-                  {error ? 'Standby (Offline)' : 'Offline / Standby'}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+        {/* Dynamic Section Routing */}
+        {currentSection === 'dashboard' ? (
+          <>
+            {/* 1. Patient Summary Card with Title, Description, and Action Buttons */}
+            <PatientSummaryCard
+              patient={patient}
+              onLoadDemoPatient={handleLoadDemoPatient}
+              onAddPatient={handleAddPatient}
+            />
 
-      {/* Body Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Hero Section */}
-        <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-teal-50 text-teal-700 border border-teal-200 text-xs font-semibold">
-              <Activity className="w-3.5 h-3.5" />
-              Phase 2 Architecture Ready
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              Intelligent, Persistent Memory for Continuous Patient Care
-            </h2>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Maintains time-aware, evidence-backed memory of a patient&apos;s medical history, allergies, medication transitions, and symptoms across multiple interactions without epistemic forgetting or silent record collisions.
-            </p>
-          </div>
-        </div>
+            {/* 2. Five Key Metric / Overview Cards */}
+            <OverviewCards
+              currentMedCount={currentMeds.length}
+              stoppedMedCount={stoppedMeds.length}
+              allergyCount={DEMO_ALLERGIES.length}
+              symptomCount={DEMO_SYMPTOMS.length}
+              conflictCount={DEMO_CONFLICTS.length}
+              memoryCount={DEMO_MEMORIES.length}
+              onNavigate={setCurrentSection}
+            />
 
-        {/* Core Capabilities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-              <Clock className="w-5 h-5" />
-            </div>
-            <h3 className="font-semibold text-slate-900 text-base">Temporal Understanding</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Distinguishes current medications from discontinued therapies and temporary symptoms based on date-anchored memory recall.
-            </p>
-          </div>
+            {/* 3. Active Clinical Conflict Alert */}
+            {DEMO_CONFLICTS.length > 0 && (
+              <ActiveConflictCard
+                conflict={DEMO_CONFLICTS[0]}
+                onNavigateToConflicts={() => setCurrentSection('conflicts')}
+              />
+            )}
 
-          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <h3 className="font-semibold text-slate-900 text-base">Active Conflict Detection</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Never silently overwrites conflicting clinical records. Detects contradictions (e.g. allergy status) and requests human review.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600">
-              <FileText className="w-5 h-5" />
-            </div>
-            <h3 className="font-semibold text-slate-900 text-base">Evidence & Provenance</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Every factual statement is grounded in retrieved memory units with explicit source tracking and interaction anchors.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <h3 className="font-semibold text-slate-900 text-base">Medical Safety Layer</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Strictly prohibited from autonomous diagnoses or prescriptions. Enforces safety boundaries on all responses.
-            </p>
-          </div>
-        </div>
-
-        {/* Dual-Persistence Status Overview */}
-        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4">
-          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <Database className="w-5 h-5 text-teal-600" />
-            Dual-Persistence Engine Status
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-xs text-slate-800 uppercase tracking-wider">PostgreSQL Application State</span>
-                <span className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Initialized
-                </span>
+            {/* 4. Two-Column Clinical Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+              {/* Left Column: Medications & Allergies */}
+              <div className="space-y-6">
+                <MedicationSummarySection
+                  medications={DEMO_MEDICATIONS}
+                  onNavigateToMedications={() => setCurrentSection('medications')}
+                />
+                <AllergySummarySection
+                  allergies={DEMO_ALLERGIES}
+                  onNavigateToAllergies={() => setCurrentSection('allergies')}
+                />
               </div>
-              <p className="text-xs text-slate-600">
-                Manages structured relational entities: synthetic patient profiles, conversation logs, interactions, tracked conflicts, and evidence links.
-              </p>
-            </div>
 
-            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-xs text-slate-800 uppercase tracking-wider">Hindsight Long-Term Memory</span>
-                <span className="text-xs text-emerald-600 flex items-center gap-1 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Client Verified
-                </span>
+              {/* Right Column: Timeline & Hindsight Memories */}
+              <div className="space-y-6">
+                <RecentTimelineSection
+                  events={DEMO_TIMELINE}
+                  onNavigateToTimeline={() => setCurrentSection('timeline')}
+                />
+                <MemoryPreviewSection
+                  memories={DEMO_MEMORIES}
+                  onNavigateToMemories={() => setCurrentSection('memories')}
+                />
               </div>
-              <p className="text-xs text-slate-600">
-                Manages episodic patient memory banks with multi-strategy retrieval (semantic, BM25, graph, and temporal indexing) using official <code className="text-teal-700 bg-teal-50 px-1 rounded">hindsight-client 0.10.1</code>.
-              </p>
             </div>
-          </div>
-        </div>
-      </main>
-    </div>
+          </>
+        ) : (
+          renderSectionPlaceholder(currentSection)
+        )}
+      </div>
+    </AppShell>
   );
 }
