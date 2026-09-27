@@ -1,1 +1,4 @@
-"""Database connection, engine, and session management package."""
+"""Database package."""
+from backend.app.database.session import Base, engine, get_db, init_db
+
+__all__ = ["Base", "engine", "get_db", "init_db"]

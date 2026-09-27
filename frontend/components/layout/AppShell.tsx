@@ -15,6 +15,7 @@ interface AppShellProps {
   currentSection: string;
   onSelectSection: (section: string) => void;
   conflictCount: number;
+  onOpenSearch?: () => void;
 }
 
 export function AppShell({
@@ -26,6 +27,7 @@ export function AppShell({
   currentSection,
   onSelectSection,
   conflictCount,
+  onOpenSearch,
 }: AppShellProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -52,6 +54,7 @@ export function AppShell({
         healthError={healthError}
         mobileMenuOpen={mobileMenuOpen}
         onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
+        onOpenSearch={onOpenSearch}
       />
 
       {/* Main Layout Container */}

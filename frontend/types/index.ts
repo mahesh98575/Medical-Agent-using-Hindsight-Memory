@@ -2,9 +2,21 @@
  * Core clinical and memory types for Healthcare Memory Assistant.
  */
 
-export type MemoryStatus = 'CURRENT' | 'HISTORICAL' | 'STOPPED' | 'TEMPORARY' | 'CONFLICTED' | 'UNKNOWN';
+export type MemoryStatus =
+  | 'CURRENT'
+  | 'HISTORICAL'
+  | 'STOPPED'
+  | 'TEMPORARY'
+  | 'CONFLICTED'
+  | 'UNKNOWN'
+  | 'UNVERIFIED';
 
-export type SourceType = 'PATIENT_REPORTED' | 'DOCTOR_RECOMMENDATION' | 'SYSTEM_GENERATED' | 'SYNTHETIC_DEMO_RECORD' | 'UNKNOWN';
+export type SourceType =
+  | 'PATIENT_REPORTED'
+  | 'DOCTOR_RECOMMENDATION'
+  | 'SYSTEM_GENERATED'
+  | 'SYNTHETIC_DEMO_RECORD'
+  | 'UNKNOWN';
 
 export interface Patient {
   id: string;
@@ -14,6 +26,8 @@ export interface Patient {
   primary_condition?: string;
   is_synthetic: boolean;
   created_at?: string;
+  blood_type?: string;
+  emergency_contact?: string;
 }
 
 export interface Medication {
@@ -26,6 +40,7 @@ export interface Medication {
   source: SourceType;
   last_updated?: string;
   evidence?: string;
+  notes?: string;
 }
 
 export interface Allergy {
@@ -38,6 +53,7 @@ export interface Allergy {
   source: SourceType;
   has_conflict: boolean;
   evidence?: string;
+  notes?: string;
 }
 
 export interface Symptom {
@@ -47,6 +63,7 @@ export interface Symptom {
   reported_date?: string;
   source: SourceType;
   evidence?: string;
+  notes?: string;
 }
 
 export interface ConflictRecord {
@@ -62,6 +79,8 @@ export interface ConflictRecord {
   record_b_date?: string;
   status: 'unresolved' | 'clinician_verified';
   action_required: string;
+  evidence_ref_a?: string;
+  evidence_ref_b?: string;
 }
 
 export interface EvidenceRecord {
@@ -71,6 +90,8 @@ export interface EvidenceRecord {
   fact_type: string;
   description: string;
   timestamp: string;
+  source?: SourceType;
+  original_statement?: string;
 }
 
 export interface MemoryItem {
@@ -85,6 +106,8 @@ export interface MemoryItem {
   document_id?: string;
   tags?: string[];
   score?: number;
+  original_statement?: string;
+  evidence_available?: boolean;
 }
 
 export interface ChatMessage {
@@ -95,6 +118,7 @@ export interface ChatMessage {
   memories_recalled?: MemoryItem[];
   conflicts_detected?: ConflictRecord[];
   evidence_citations?: EvidenceRecord[];
+  is_generating?: boolean;
 }
 
 export interface HealthStatus {
@@ -105,3 +129,55 @@ export interface HealthStatus {
   services: Record<string, string>;
   synthetic_mode: boolean;
 }
+
+export interface EvidenceDetail {
+  memoryId: string;
+  title: string;
+  category: string;
+  source: SourceType | string;
+  originalStatement: string;
+  date: string;
+  interactionId: string;
+  status: MemoryStatus;
+  context?: string;
+}
+
+export interface DemoStep {
+  stepNumber: number;
+  speaker: 'Patient' | 'Doctor' | 'System';
+  statement: string;
+  explanation: string;
+  retainedFact?: string;
+  updatedFact?: string;
+  statusChange?: string;
+  conflictDetected?: boolean;
+  conflictDetails?: string;
+  evidenceRef: string;
+}
+
+export interface TimelineEvent {
+  id: string;
+  date?: string;
+  formatted_date?: string;
+  timestamp?: string;
+  title: string;
+  description: string;
+  category: 'medication' | 'allergy' | 'symptom' | 'conflict' | 'recommendation' | string;
+  status?: 'CURRENT' | 'HISTORICAL' | 'STOPPED' | 'CONFLICTED' | 'TEMPORARY' | string;
+  evidence_ref?: string;
+  evidence_id?: string;
+  source?: string;
+}
+
+export interface SearchResultItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  category: 'patients' | 'medications' | 'allergies' | 'memories' | 'conflicts' | 'symptoms' | string;
+  status?: MemoryStatus | string;
+  targetSection?: string;
+  source?: string;
+  relevance_score?: number;
+}
+

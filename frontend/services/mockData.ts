@@ -1,15 +1,5 @@
-import { Patient, Medication, Allergy, Symptom, ConflictRecord, MemoryItem } from '@/types';
-
-export interface TimelineEvent {
-  id: string;
-  date: string;
-  formatted_date: string;
-  title: string;
-  description: string;
-  category: 'medication' | 'allergy' | 'symptom' | 'conflict' | 'recommendation';
-  status: 'CURRENT' | 'HISTORICAL' | 'STOPPED' | 'CONFLICTED' | 'TEMPORARY';
-  evidence_ref: string;
-}
+import { Patient, Medication, Allergy, Symptom, ConflictRecord, MemoryItem, TimelineEvent } from '@/types';
+export type { TimelineEvent };
 
 export const DEMO_PATIENT: Patient = {
   id: 'P001',

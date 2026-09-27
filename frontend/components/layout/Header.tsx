@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Brain, Server, Menu, X, User } from 'lucide-react';
+import { Brain, Server, Menu, X, User, Search } from 'lucide-react';
 import { HealthStatus, Patient } from '@/types';
 
 interface HeaderProps {
@@ -11,6 +11,7 @@ interface HeaderProps {
   healthError: string | null;
   mobileMenuOpen: boolean;
   onToggleMobileMenu: () => void;
+  onOpenSearch?: () => void;
 }
 
 export function Header({
@@ -20,6 +21,7 @@ export function Header({
   healthError,
   mobileMenuOpen,
   onToggleMobileMenu,
+  onOpenSearch,
 }: HeaderProps) {
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
@@ -55,8 +57,24 @@ export function Header({
           </div>
         </div>
 
-        {/* Right: Active Patient & Backend Health Indicator */}
+        {/* Right: Search, Active Patient & Backend Health Indicator */}
         <div className="flex items-center gap-3">
+          {/* Quick Search Button */}
+          {onOpenSearch && (
+            <button
+              type="button"
+              onClick={onOpenSearch}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+              title="Search records (Ctrl+K)"
+            >
+              <Search className="w-3.5 h-3.5 text-slate-400" />
+              <span className="hidden md:inline">Quick Search...</span>
+              <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[10px] font-mono text-slate-400 bg-white rounded border border-slate-200">
+                ⌘K
+              </kbd>
+            </button>
+          )}
+
           {/* Active Patient Chip */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
             <User className="w-3.5 h-3.5 text-teal-600" />

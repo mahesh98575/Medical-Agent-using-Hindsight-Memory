@@ -74,7 +74,7 @@ export function RecentTimelineSection({
                     </span>
                     <span className="text-xs text-slate-300">•</span>
                     <h4 className="font-semibold text-slate-900 text-sm">{event.title}</h4>
-                    <StatusBadge status={event.status} />
+                    <StatusBadge status={event.status || 'CURRENT'} />
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed max-w-2xl">
                     {event.description}
