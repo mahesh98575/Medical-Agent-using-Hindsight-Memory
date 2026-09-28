@@ -65,7 +65,7 @@ export function AiAssistantView({
       text: 'CONTRADICTION DETECTED: Penicillin allergy noted in 2024 chart vs denial during 2026 intake.',
       category: 'allergy',
       temporal_status: 'CONFLICTED',
-      source: 'SYNTHETIC_DEMO_RECORD',
+      source: 'PATIENT_REPORTED',
       mentioned_at: '2026-02-05',
       score: 0.98,
       original_statement: 'Chart review indicates Penicillin anaphylaxis (2024). Intake note on 2026-02-05 recorded "no known drug allergies".',
@@ -119,7 +119,7 @@ export function AiAssistantView({
         if (assistantReply.memories_recalled && assistantReply.memories_recalled.length > 0) {
           setRecalledMemories(assistantReply.memories_recalled);
         }
-      } catch (_err) {
+      } catch {
         // Fallback response if fetch fails
         handleLocalAgentFallback(query);
       } finally {

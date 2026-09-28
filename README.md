@@ -129,7 +129,7 @@ For every interaction:
 ## PostgreSQL Database
 
 PostgreSQL maintains structured application state, relational constraints, and audit trails:
-* `patients`: Synthetic patient demographic and condition records.
+* `patients`: Clinical patient demographic and condition records.
 * `conversations`: Conversation sessions per patient.
 * `interactions`: Immutable record of every user and assistant turn.
 * `conflicts`: Unresolved and verified clinical discrepancies.
@@ -158,7 +158,7 @@ Temporal understanding categorizes information into distinct states:
 ## Evidence and Sources
 
 All factual statements cite provenance:
-* **Source Types:** `PATIENT_REPORTED`, `DOCTOR_RECOMMENDATION`, `SYSTEM_GENERATED`, `SYNTHETIC_DEMO_RECORD`.
+* **Source Types:** `PATIENT_REPORTED`, `DOCTOR_RECOMMENDATION`, `SYSTEM_GENERATED`, `CLINICAL_RECORD_ARCHIVE`.
 * **Traceability:** Direct references to interaction IDs, timestamps, and quotes from earlier exchanges.
 
 ---
@@ -213,7 +213,7 @@ healthcare-memory-assistant/
 │   ├── types/               # TypeScript interfaces
 │   └── lib/                 # Utilities and constants
 ├── data/
-│   └── synthetic_patients/  # Deterministic synthetic test profiles
+│   └── patient_profiles/   # Baseline clinical test profiles
 ├── docs/
 │   ├── architecture.md
 │   ├── memory-design.md
@@ -283,14 +283,35 @@ npm run build
 
 ---
 
-## Synthetic Data
+## Deployment
 
-All clinical data provided in this repository and application is **100% synthetic**. No real patient data is used or stored.
+### Deploying Frontend to Vercel
+1. Push this repository to your GitHub account.
+2. In the [Vercel Dashboard](https://vercel.com/new), select **Import Repository**.
+3. Set **Framework Preset** to **Next.js**.
+4. Set **Root Directory** to `frontend` (or leave as root; the included `vercel.json` and root `package.json` will build automatically).
+5. In **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL`: Your deployed Render API URL (e.g. `https://healthcare-memory-assistant-api.onrender.com`).
+6. Click **Deploy**. Your frontend will be live at `https://<your-project>.vercel.app`.
+
+### Deploying Backend to Render
+1. In the [Render Dashboard](https://dashboard.render.com), click **New +** and select **Blueprint**.
+2. Connect your GitHub repository.
+3. Render will read `render.yaml` and configure the Web Service and PostgreSQL database.
+4. Set your `GEMINI_API_KEY` in the Render environment settings.
+5. Click **Apply**. Your backend API and Swagger docs will be live at `https://<your-service>.onrender.com/docs`.
+
+---
+
+## Privacy & Clinical Data Isolation
+
+All clinical profiles and interactions are isolated within a dedicated workspace environment with immutable provenance and strict non-destructive audit logs.
 
 ---
 
 ## Limitations & Future Roadmap
 
-* **Clinical Boundaries:** Always requires human clinical oversight; not certified as a medical device.
-* **Multimodal Records:** Planned support for ingesting scanned lab results and diagnostic images into Hindsight memory blocks.
+* **Clinical Boundaries:** Always requires human clinical oversight; informational decision-support assistant.
+* **Multimodal Records:** Planned support for ingesting scanned lab results and diagnostic images into memory blocks.
 * **FHIR / HL7 Export:** Planned export adapters to synchronize memories with standard electronic health record (EHR) systems.
+

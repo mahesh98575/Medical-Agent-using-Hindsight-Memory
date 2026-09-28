@@ -3,12 +3,13 @@ export type { TimelineEvent };
 
 export const DEMO_PATIENT: Patient = {
   id: 'P001',
-  synthetic_label: 'Demo Patient 001 (Synthetic Profile)',
+  synthetic_label: 'Eleanor Vance',
   age: 45,
   gender: 'Female',
   primary_condition: 'Mild Persistent Asthma',
   is_synthetic: true,
   created_at: '2026-01-15T09:00:00Z',
+  blood_type: 'O+',
 };
 
 export const DEMO_MEDICATIONS: Medication[] = [

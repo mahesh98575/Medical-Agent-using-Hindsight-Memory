@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { X, UserPlus, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, UserPlus, HeartPulse } from 'lucide-react';
 import { Patient } from '@/types';
 import { Button } from '@/components/ui/Button';
 
@@ -16,19 +16,17 @@ export function AddPatientModal({
   onClose,
   onAddPatient,
 }: AddPatientModalProps) {
-  const [syntheticLabel, setSyntheticLabel] = useState('');
+  const [fullName, setFullName] = useState('');
   const [age, setAge] = useState(48);
   const [gender, setGender] = useState('Male');
-  const [primaryCondition, setPrimaryCondition] = useState('Mild Persistent Asthma');
+  const [primaryCondition, setPrimaryCondition] = useState('Essential Hypertension');
   const [bloodType, setBloodType] = useState('A+');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          onClose();
-        }
+        if (e.key === 'Escape') onClose();
       };
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
@@ -39,19 +37,17 @@ export function AddPatientModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!syntheticLabel.trim()) return;
+    if (!fullName.trim()) return;
 
     setIsSubmitting(true);
     const newId = `P${Math.floor(100 + Math.random() * 900)}`;
 
     const newPatient: Patient = {
       id: newId,
-      synthetic_label: syntheticLabel.includes('(Synthetic)')
-        ? syntheticLabel
-        : `${syntheticLabel} (Synthetic)`,
+      synthetic_label: fullName.trim(),
       age: Number(age),
       gender,
-      primary_condition: primaryCondition,
+      primary_condition: primaryCondition.trim() || 'General Medical Consultation',
       blood_type: bloodType,
       is_synthetic: true,
       created_at: new Date().toISOString(),
@@ -59,12 +55,13 @@ export function AddPatientModal({
 
     onAddPatient(newPatient);
     setIsSubmitting(false);
+    setFullName('');
     onClose();
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
@@ -72,49 +69,41 @@ export function AddPatientModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-teal-100 text-teal-700 rounded-lg">
+        <div className="p-5 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 bg-teal-100 text-teal-700 rounded-xl">
               <UserPlus className="w-4 h-4" />
             </span>
             <div>
               <h2 className="text-base font-bold text-slate-900">
-                Register Synthetic Patient Profile
+                Register New Patient Profile
               </h2>
               <p className="text-xs text-slate-500">
-                Initialize an isolated episodic memory bank
+                Initialize episodic memory bank and clinical history
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg"
+            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
           >
             <X className="w-5 h-5" />
           </button>
-        </div>
-
-        {/* Synthetic Safety Alert */}
-        <div className="m-5 mb-0 p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
-          <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-[11px] leading-relaxed">
-            <strong>Synthetic Data Only:</strong> To ensure regulatory safety, do NOT enter real identifiable patient records. All entries are isolated into synthetic simulation namespaces.
-          </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Synthetic Label / Identifier Name *
+              Patient Full Name *
             </label>
             <input
               type="text"
               required
-              value={syntheticLabel}
-              onChange={(e) => setSyntheticLabel(e.target.value)}
-              placeholder="e.g. Demo Patient 002"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="e.g. Eleanor Vance, Dr. Marcus Vance"
               className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-teal-600"
             />
           </div>
@@ -140,11 +129,11 @@ export function AddPatientModal({
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-600"
+                className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-600 font-medium"
               >
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
-                <option value="Other">Other</option>
+                <option value="Other">Other / Non-Binary</option>
               </select>
             </div>
           </div>
@@ -158,7 +147,7 @@ export function AddPatientModal({
                 type="text"
                 value={primaryCondition}
                 onChange={(e) => setPrimaryCondition(e.target.value)}
-                placeholder="e.g. Hypertension"
+                placeholder="e.g. Mild Persistent Asthma"
                 className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-teal-600"
               />
             </div>
@@ -169,7 +158,7 @@ export function AddPatientModal({
               <select
                 value={bloodType}
                 onChange={(e) => setBloodType(e.target.value)}
-                className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-600"
+                className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-600 font-medium"
               >
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -183,18 +172,25 @@ export function AddPatientModal({
             </div>
           </div>
 
-          {/* Buttons */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-            <Button variant="ghost" size="sm" type="button" onClick={onClose}>
+          <div className="p-3 bg-teal-50/50 rounded-xl border border-teal-100 flex items-start gap-2.5 text-xs text-teal-900">
+            <HeartPulse className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+            <p className="text-[11px] leading-relaxed text-teal-800">
+              Registering this patient initializes a personalized memory vault for longitudinal observation, medication regimen changes, and clinical discrepancy detection.
+            </p>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
+            <Button type="button" variant="outline" size="sm" onClick={onClose}>
               Cancel
             </Button>
             <Button
+              type="submit"
               variant="primary"
               size="sm"
-              type="submit"
-              disabled={!syntheticLabel.trim() || isSubmitting}
+              disabled={!fullName.trim() || isSubmitting}
             >
-              Initialize Patient Memory Bank
+              {isSubmitting ? 'Registering...' : 'Register Patient Profile'}
             </Button>
           </div>
         </form>

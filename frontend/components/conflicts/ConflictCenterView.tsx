@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AlertTriangle, ShieldAlert, CheckCircle2, FileText, UserCheck, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, CheckCircle2, FileText, UserCheck, ShieldCheck, GitCompare } from 'lucide-react';
 import { ConflictRecord, EvidenceDetail } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -60,11 +60,11 @@ export function ConflictCenterView({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-rose-50 text-rose-700">
-              <AlertTriangle className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700">
+              <GitCompare className="w-5 h-5" />
             </div>
             <h1 className="text-xl font-bold text-slate-900">
               Clinical Conflict Verification Center
@@ -76,7 +76,7 @@ export function ConflictCenterView({
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant={unresolved.length > 0 ? 'rose' : 'emerald'} size="md">
+          <Badge variant={unresolved.length > 0 ? 'amber' : 'emerald'} size="md">
             {unresolved.length} Active Discrepancies
           </Badge>
         </div>
@@ -116,7 +116,7 @@ export function ConflictCenterView({
           onClick={() => setActiveTab('active')}
           className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
             activeTab === 'active'
-              ? 'bg-rose-700 text-white'
+              ? 'bg-indigo-700 text-white'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >

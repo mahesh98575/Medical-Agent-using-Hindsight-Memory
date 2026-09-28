@@ -8,7 +8,7 @@ import {
   ShieldAlert,
   Activity,
   BrainCircuit,
-  AlertTriangle,
+  GitCompare,
   FileText,
   Clock,
 } from 'lucide-react';
@@ -68,9 +68,6 @@ export function PatientProfileView({
               <h1 className="text-xl font-bold text-slate-900">
                 {patient.synthetic_label}
               </h1>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-800 border border-amber-200">
-                SYNTHETIC PATIENT DATA
-              </span>
               <span className="font-mono text-xs text-slate-400">ID: {patient.id}</span>
             </div>
             <p className="text-xs text-slate-500">
@@ -92,8 +89,8 @@ export function PatientProfileView({
             <div className="text-base font-bold text-slate-600">{stoppedMeds.length}</div>
           </div>
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center min-w-[90px]">
-            <div className="text-[11px] text-slate-400 uppercase font-semibold">Discrepancies</div>
-            <div className="text-base font-bold text-rose-600">{conflicts.length}</div>
+            <div className="text-[11px] text-slate-400 uppercase font-semibold">Reconciliation</div>
+            <div className="text-base font-bold text-indigo-700">{conflicts.length}</div>
           </div>
         </div>
       </div>
@@ -106,7 +103,7 @@ export function PatientProfileView({
           { id: 'allergies' as const, label: `Allergies (${allergies.length})`, icon: ShieldAlert },
           { id: 'symptoms' as const, label: `Symptoms (${symptoms.length})`, icon: Activity },
           { id: 'memories' as const, label: `Memory Vault (${memories.length})`, icon: BrainCircuit },
-          { id: 'conflicts' as const, label: `Discrepancies (${conflicts.length})`, icon: AlertTriangle },
+          { id: 'conflicts' as const, label: `Reconciliation (${conflicts.length})`, icon: GitCompare },
         ] as const).map((tab) => {
           const isSelected = activeTab === tab.id;
           const Icon = tab.icon;
@@ -226,13 +223,13 @@ export function PatientProfileView({
             <div
               key={a.allergen}
               className={`p-5 rounded-2xl border text-xs space-y-3 ${
-                a.has_conflict ? 'bg-rose-50/50 border-rose-300' : 'bg-white border-slate-200'
+                a.has_conflict ? 'bg-amber-50/20 border-amber-200' : 'bg-white border-slate-200'
               }`}
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900">{a.allergen}</h3>
-                <Badge variant={a.has_conflict ? 'rose' : 'teal'} size="sm">
-                  {a.has_conflict ? 'CONFLICT DETECTED' : 'CONFIRMED'}
+                <Badge variant={a.has_conflict ? 'amber' : 'teal'} size="sm">
+                  {a.has_conflict ? 'RECONCILIATION PENDING' : 'CONFIRMED'}
                 </Badge>
               </div>
               <p className="text-slate-700">Reaction: {a.reaction || 'None'}</p>
@@ -326,13 +323,15 @@ export function PatientProfileView({
       {activeTab === 'conflicts' && (
         <div className="space-y-4">
           {conflicts.map((conf) => (
-            <div key={conf.id} className="bg-rose-50/50 p-5 rounded-2xl border border-rose-300 text-xs space-y-3">
+            <div key={conf.id} className="bg-indigo-50/30 p-5 rounded-2xl border border-indigo-200/80 text-xs space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-rose-950">{conf.conflict_type}</h3>
-                <Badge variant="rose" size="sm">UNRESOLVED</Badge>
+                <h3 className="text-base font-bold text-slate-900">{conf.conflict_type}</h3>
+                <Badge variant={conf.status === 'clinician_verified' ? 'emerald' : 'amber'} size="sm">
+                  {conf.status === 'clinician_verified' ? 'VERIFIED' : 'RECONCILIATION PENDING'}
+                </Badge>
               </div>
-              <p className="text-rose-900">{conf.description}</p>
-              <div className="grid grid-cols-2 gap-2 p-3 bg-white rounded-xl border border-rose-200">
+              <p className="text-slate-700">{conf.description}</p>
+              <div className="grid grid-cols-2 gap-2 p-3 bg-white rounded-xl border border-slate-200">
                 <div>
                   <strong className="block text-[11px] text-slate-500">Record A</strong>
                   <p className="text-slate-800">{conf.record_a_summary}</p>

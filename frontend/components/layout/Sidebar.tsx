@@ -5,9 +5,9 @@ import {
   LayoutDashboard,
   FileClock,
   Pill,
-  ShieldAlert,
+  Shield,
   History,
-  AlertTriangle,
+  GitCompare,
   BrainCircuit,
   HelpCircle,
 } from 'lucide-react';
@@ -16,12 +16,14 @@ interface SidebarProps {
   currentSection: string;
   onSelectSection: (section: string) => void;
   conflictCount: number;
+  medicationCount?: number;
 }
 
 export function Sidebar({
   currentSection,
   onSelectSection,
   conflictCount,
+  medicationCount = 0,
 }: SidebarProps) {
   const navItems = [
     {
@@ -42,7 +44,7 @@ export function Sidebar({
       label: 'Demo Walkthrough',
       icon: History,
       badge: '5 Steps',
-      badgeColor: 'bg-amber-100 text-amber-800',
+      badgeColor: 'bg-slate-100 text-slate-700',
     },
     {
       id: 'patient-profile',
@@ -54,20 +56,21 @@ export function Sidebar({
       id: 'medications',
       label: 'Medications',
       icon: Pill,
-      badge: '2',
+      badge: medicationCount > 0 ? `${medicationCount}` : null,
+      badgeColor: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
     },
     {
       id: 'allergies',
       label: 'Allergies',
-      icon: ShieldAlert,
+      icon: Shield,
       badge: null,
     },
     {
       id: 'conflicts',
-      label: 'Conflict Center',
-      icon: AlertTriangle,
+      label: 'Reconciliation Center',
+      icon: GitCompare,
       badge: conflictCount > 0 ? `${conflictCount}` : null,
-      badgeColor: 'bg-rose-500 text-white',
+      badgeColor: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
     },
     {
       id: 'timeline',
@@ -77,7 +80,7 @@ export function Sidebar({
     },
     {
       id: 'settings',
-      label: 'System & Safety',
+      label: 'System & Governance',
       icon: HelpCircle,
       badge: null,
     },
@@ -99,9 +102,9 @@ export function Sidebar({
                 key={item.id}
                 type="button"
                 onClick={() => onSelectSection(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors text-left ${
+                className={`w-full flex items-center justify-between px-3 py-2 text-xs sm:text-sm font-medium rounded-xl transition-all text-left ${
                   isActive
-                    ? 'bg-teal-50 text-teal-800 border border-teal-200/80 shadow-xs'
+                    ? 'bg-teal-50 text-teal-900 border border-teal-200/80 shadow-2xs font-semibold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
@@ -115,7 +118,7 @@ export function Sidebar({
                 </div>
                 {item.badge && (
                   <span
-                    className={`px-1.5 py-0.5 rounded-full font-bold text-[10px] ${
+                    className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
                       item.badgeColor || 'bg-slate-100 text-slate-600'
                     }`}
                   >

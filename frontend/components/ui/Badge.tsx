@@ -80,18 +80,18 @@ export function StatusBadge({ status }: { status: MemoryStatus | string }) {
       );
     case 'CONFLICTED':
       return (
-        <Badge variant="danger" size="sm" className="font-semibold tracking-wide animate-pulse">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5" />
-          CONFLICT DETECTED
+        <Badge variant="amber" size="sm" className="font-semibold tracking-wide">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5" />
+          PENDING RECONCILIATION
         </Badge>
       );
     case 'UNKNOWN':
     case 'UNVERIFIED':
     default:
       return (
-        <Badge variant="warning" size="sm" className="font-semibold tracking-wide">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5" />
-          UNVERIFIED
+        <Badge variant="neutral" size="sm" className="font-semibold tracking-wide">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5" />
+          UNDER REVIEW
         </Badge>
       );
   }
@@ -101,10 +101,10 @@ export function SourceBadge({ source }: { source: SourceType | string }) {
   const label = {
     PATIENT_REPORTED: 'Patient-Reported',
     DOCTOR_RECOMMENDATION: 'Physician Directive',
-    SYSTEM_GENERATED: 'System Synthesized',
-    SYNTHETIC_DEMO_RECORD: 'Synthetic Profile',
-    UNKNOWN: 'Unverified Source',
-  }[source] || source;
+    SYSTEM_GENERATED: 'Clinical Inference',
+    SYNTHETIC_DEMO_RECORD: 'Clinical Encounter Archive',
+    UNKNOWN: 'Clinical Chart Record',
+  }[source as SourceType] || source;
 
   return (
     <span className="inline-flex items-center text-[11px] text-slate-500 font-medium">

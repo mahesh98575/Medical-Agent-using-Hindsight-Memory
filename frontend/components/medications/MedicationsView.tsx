@@ -170,7 +170,7 @@ export function MedicationsView({
                     <span className="text-slate-400 block text-[11px]">
                       {isCurrent ? 'Status Date:' : 'Discontinued Date:'}
                     </span>
-                    <span className={`font-medium ${isCurrent ? 'text-emerald-700' : 'text-rose-700 font-semibold'}`}>
+                    <span className={`font-medium ${isCurrent ? 'text-emerald-700' : 'text-slate-600'}`}>
                       {med.end_date || (isCurrent ? 'Ongoing' : 'Recorded')}
                     </span>
                   </div>

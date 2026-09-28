@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AlertTriangle, Clock, ArrowRight, UserCheck } from 'lucide-react';
+import { GitCompare, Clock, ArrowRight, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { ConflictRecord } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -10,43 +10,58 @@ import { Button } from '@/components/ui/Button';
 interface ActiveConflictCardProps {
   conflict: ConflictRecord;
   onNavigateToConflicts: () => void;
+  onResolve?: (conflictId: string) => void;
 }
 
 export function ActiveConflictCard({
   conflict,
   onNavigateToConflicts,
+  onResolve,
 }: ActiveConflictCardProps) {
   return (
-    <Card className="border-rose-300 bg-rose-50/20 shadow-xs">
-      <CardHeader className="bg-rose-50/50 border-b border-rose-100/80 pb-3">
-        <div className="flex items-center justify-between w-full">
+    <Card className="border-indigo-200/80 bg-gradient-to-r from-indigo-50/30 via-white to-slate-50/50 shadow-xs">
+      <CardHeader className="bg-indigo-50/40 border-b border-indigo-100/60 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-700 shrink-0">
-              <AlertTriangle className="w-4 h-4 animate-bounce" />
+            <div className="w-8 h-8 rounded-xl bg-indigo-100/80 border border-indigo-200 text-indigo-700 flex items-center justify-center shrink-0">
+              <GitCompare className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <CardTitle className="text-rose-900 text-sm sm:text-base">
-                  Potential Clinical Conflict Detected
+                <CardTitle className="text-slate-900 text-sm sm:text-base">
+                  Clinical Statement Reconciliation
                 </CardTitle>
-                <Badge variant="danger" size="sm" className="font-semibold uppercase tracking-wider text-[10px]">
-                  Requires Clinical Verification
+                <Badge variant="amber" size="sm" className="font-semibold uppercase tracking-wider text-[10px]">
+                  Requires Verification
                 </Badge>
               </div>
-              <p className="text-xs text-rose-700/90 mt-0.5">
-                The agent identified contradictory statements across patient interactions. Conflicting records are never merged automatically.
+              <p className="text-xs text-slate-600 mt-0.5">
+                Two differing statements noted in clinical history. Both records preserved under non-destructive safety architecture.
               </p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onNavigateToConflicts}
-            className="hidden sm:inline-flex text-rose-800 border-rose-300 hover:bg-rose-100/50"
-            icon={<ArrowRight className="w-3.5 h-3.5" />}
-          >
-            Review Conflict
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            {onResolve && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onResolve(conflict.id)}
+                className="text-xs text-emerald-800 border-emerald-200 hover:bg-emerald-50"
+                icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+              >
+                Verify & Reconcile
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onNavigateToConflicts}
+              className="text-xs text-indigo-900 border-indigo-200 hover:bg-indigo-50"
+              icon={<ArrowRight className="w-3.5 h-3.5 text-indigo-600" />}
+            >
+              Audit Details
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
@@ -54,10 +69,10 @@ export function ActiveConflictCard({
         {/* Contradictory Records Comparison Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Record 1 */}
-          <div className="bg-white rounded-lg p-4 border border-rose-200/80 shadow-2xs space-y-2">
+          <div className="bg-white rounded-xl p-4 border border-slate-200/90 shadow-2xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-rose-800 uppercase tracking-wider">
-                Record A (Earlier Intake)
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                Documented Chart Record
               </span>
               <span className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
                 <Clock className="w-3 h-3" />
@@ -68,16 +83,16 @@ export function ActiveConflictCard({
               {conflict.record_a_summary}
             </p>
             <div className="pt-1 text-[11px] text-slate-500 flex items-center gap-1.5">
-              <span>Source:</span>
+              <span>Origin:</span>
               <strong className="text-slate-700 font-medium">{conflict.record_a_source}</strong>
             </div>
           </div>
 
           {/* Record 2 */}
-          <div className="bg-white rounded-lg p-4 border border-rose-200/80 shadow-2xs space-y-2">
+          <div className="bg-white rounded-xl p-4 border border-slate-200/90 shadow-2xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-rose-800 uppercase tracking-wider">
-                Record B (Recent Statement)
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                Subsequent Intake Statement
               </span>
               <span className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
                 <Clock className="w-3 h-3" />
@@ -88,19 +103,19 @@ export function ActiveConflictCard({
               {conflict.record_b_summary}
             </p>
             <div className="pt-1 text-[11px] text-slate-500 flex items-center gap-1.5">
-              <span>Source:</span>
+              <span>Origin:</span>
               <strong className="text-slate-700 font-medium">{conflict.record_b_source}</strong>
             </div>
           </div>
         </div>
 
         {/* Action Required Banner */}
-        <div className="rounded-lg bg-rose-100/70 border border-rose-200 px-4 py-2.5 flex items-start gap-2.5 text-xs text-rose-900">
-          <UserCheck className="w-4 h-4 text-rose-700 shrink-0 mt-0.5" />
+        <div className="rounded-xl bg-amber-50/70 border border-amber-200/80 px-4 py-2.5 flex items-start gap-2.5 text-xs text-amber-900">
+          <ShieldAlert className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
           <div className="leading-tight">
-            <strong>Clinical Safety Action:</strong> {conflict.action_required}
-            <span className="block text-[11px] text-rose-700/80 mt-0.5">
-              Rule: The AI will not autonomously discard either record until verified by a licensed clinician.
+            <strong>Clinical Safety Protocol:</strong> {conflict.action_required}
+            <span className="block text-[11px] text-amber-800/90 mt-0.5">
+              Rule: System does not auto-delete conflicting facts without licensed physician confirmation.
             </span>
           </div>
         </div>

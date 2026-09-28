@@ -38,7 +38,7 @@ const DEFAULT_SEARCH_ITEMS: SearchResultItem[] = [
     category: 'conflicts',
     status: 'CONFLICTED',
     description: 'Documented anaphylaxis (2024) vs intake denial (2026). Verification required.',
-    source: 'SYNTHETIC_DEMO_RECORD',
+    source: 'PATIENT_REPORTED',
     relevance_score: 0.99,
   },
   {

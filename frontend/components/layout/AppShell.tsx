@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AlertTriangle } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { HealthStatus, Patient } from '@/types';
@@ -9,24 +8,32 @@ import { HealthStatus, Patient } from '@/types';
 interface AppShellProps {
   children: React.ReactNode;
   patient: Patient;
+  patients?: Patient[];
+  onSelectPatient?: (patient: Patient) => void;
+  onOpenAddPatient?: () => void;
   health: HealthStatus | null;
   healthLoading: boolean;
   healthError: string | null;
   currentSection: string;
   onSelectSection: (section: string) => void;
   conflictCount: number;
+  medicationCount?: number;
   onOpenSearch?: () => void;
 }
 
 export function AppShell({
   children,
   patient,
+  patients = [],
+  onSelectPatient,
+  onOpenAddPatient,
   health,
   healthLoading,
   healthError,
   currentSection,
   onSelectSection,
   conflictCount,
+  medicationCount = 0,
   onOpenSearch,
 }: AppShellProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,18 +44,13 @@ export function AppShell({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* Top Banner: Synthetic Data Disclaimer */}
-      <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 text-center text-xs font-semibold text-amber-900 flex items-center justify-center gap-2">
-        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-        <span>
-          SYNTHETIC DEMO ENVIRONMENT — All patient records, medications, and clinical histories are simulated for clinical decision-support demonstrations.
-        </span>
-      </div>
-
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans antialiased text-slate-900">
       {/* Global Header */}
       <Header
         patient={patient}
+        patients={patients}
+        onSelectPatient={onSelectPatient}
+        onOpenAddPatient={onOpenAddPatient}
         health={health}
         healthLoading={healthLoading}
         healthError={healthError}
@@ -65,6 +67,7 @@ export function AppShell({
             currentSection={currentSection}
             onSelectSection={handleSelectSection}
             conflictCount={conflictCount}
+            medicationCount={medicationCount}
           />
         </div>
 
@@ -82,6 +85,7 @@ export function AppShell({
                 currentSection={currentSection}
                 onSelectSection={handleSelectSection}
                 conflictCount={conflictCount}
+                medicationCount={medicationCount}
               />
             </div>
           </div>

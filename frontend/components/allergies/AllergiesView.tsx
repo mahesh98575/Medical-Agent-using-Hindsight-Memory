@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ShieldAlert, AlertTriangle, FileText, UserCheck, Shield } from 'lucide-react';
+import { Shield, GitCompare, FileText, UserCheck, Plus } from 'lucide-react';
 import { Allergy, ConflictRecord, EvidenceDetail } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -11,6 +11,7 @@ interface AllergiesViewProps {
   conflicts: ConflictRecord[];
   onReviewEvidence: (evidence: EvidenceDetail) => void;
   onNavigateToConflictCenter?: () => void;
+  onOpenAddAllergy?: () => void;
 }
 
 export function AllergiesView({
@@ -18,6 +19,7 @@ export function AllergiesView({
   conflicts,
   onReviewEvidence,
   onNavigateToConflictCenter,
+  onOpenAddAllergy,
 }: AllergiesViewProps) {
   const allergyConflicts = conflicts.filter(
     (c) => c.conflict_type.toLowerCase().includes('allergy') || c.id === 'conf_001'
@@ -44,8 +46,8 @@ export function AllergiesView({
   const handleReviewConflictEvidence = (conflict: ConflictRecord) => {
     onReviewEvidence({
       memoryId: conflict.id,
-      title: `Contradiction: ${conflict.conflict_type}`,
-      category: 'Conflict',
+      title: `Discrepancy: ${conflict.conflict_type}`,
+      category: 'Conflict Audit',
       source: `${conflict.record_a_source} vs ${conflict.record_b_source}`,
       originalStatement: `Record A (${conflict.record_a_date}): "${conflict.record_a_summary}"\n\nRecord B (${conflict.record_b_date}): "${conflict.record_b_summary}"`,
       date: conflict.record_b_date || '2026-02-05',
@@ -58,11 +60,11 @@ export function AllergiesView({
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-rose-50 text-rose-700">
-              <ShieldAlert className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-amber-50 text-amber-700">
+              <Shield className="w-5 h-5" />
             </div>
             <h1 className="text-xl font-bold text-slate-900">
               Allergy Records & Safety Verification
@@ -74,44 +76,55 @@ export function AllergiesView({
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant={allergyConflicts.length > 0 ? 'rose' : 'emerald'} size="md">
+          {onOpenAddAllergy && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={onOpenAddAllergy}
+              className="flex items-center gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Record Allergy</span>
+            </Button>
+          )}
+          <Badge variant={allergyConflicts.length > 0 ? 'amber' : 'emerald'} size="md">
             {allergyConflicts.length > 0
-              ? `${allergyConflicts.length} Conflict Requiring Verification`
+              ? `${allergyConflicts.length} Discrepancy Under Review`
               : 'All Records Verified'}
           </Badge>
         </div>
       </div>
 
-      {/* Prominent High-Priority Conflict Alert Banner */}
+      {/* Clinical Discrepancy Notice */}
       {allergyConflicts.length > 0 && (
-        <div className="bg-rose-50 border-2 border-rose-300 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="bg-indigo-50/40 border border-indigo-200/80 rounded-2xl p-6 shadow-xs space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-xl bg-rose-100 text-rose-700 mt-0.5">
-                <AlertTriangle className="w-6 h-6 animate-pulse" />
+              <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700 mt-0.5">
+                <GitCompare className="w-5 h-5" />
               </div>
               <div>
-                <span className="inline-block text-[11px] font-bold uppercase tracking-wider bg-rose-200 text-rose-900 px-2 py-0.5 rounded mb-1">
-                  Active Clinical Discrepancy
+                <span className="inline-block text-[11px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-md mb-1 border border-indigo-200/70">
+                  Clinical Statement Reconciliation
                 </span>
-                <h3 className="text-base font-bold text-rose-950">
+                <h3 className="text-base font-bold text-slate-900">
                   {allergyConflicts[0].description}
                 </h3>
-                <p className="text-xs text-rose-800 mt-1">
-                  The system detected conflicting information regarding Penicillin allergy. Prior records show documented anaphylaxis, while recent intake notes report no known allergies.
+                <p className="text-xs text-slate-600 mt-1">
+                  The system detected conflicting statements regarding Penicillin allergy. Prior records show documented cutaneous reaction, while recent intake notes report no known allergies.
                 </p>
               </div>
             </div>
           </div>
 
           {/* Conflict Side-by-Side Comparison */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-            <div className="bg-white/90 p-4 rounded-xl border border-rose-200 text-xs space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <div className="bg-white p-4 rounded-xl border border-slate-200/90 text-xs space-y-2 shadow-2xs">
               <div className="flex items-center justify-between text-slate-500">
-                <span className="font-semibold text-slate-700">Record A (Historical Chart Review)</span>
+                <span className="font-semibold text-slate-800">Record A (Historical Chart Review)</span>
                 <span className="text-[11px] font-mono">{allergyConflicts[0].record_a_date || '2024-05-10'}</span>
               </div>
-              <p className="text-slate-800 font-medium leading-relaxed">
+              <p className="text-slate-700 leading-relaxed font-medium">
                 {allergyConflicts[0].record_a_summary}
               </p>
               <div className="text-[11px] text-slate-500">
@@ -119,12 +132,12 @@ export function AllergiesView({
               </div>
             </div>
 
-            <div className="bg-white/90 p-4 rounded-xl border border-rose-200 text-xs space-y-2">
+            <div className="bg-white p-4 rounded-xl border border-slate-200/90 text-xs space-y-2 shadow-2xs">
               <div className="flex items-center justify-between text-slate-500">
-                <span className="font-semibold text-slate-700">Record B (Recent Patient Intake)</span>
+                <span className="font-semibold text-slate-800">Record B (Recent Patient Intake)</span>
                 <span className="text-[11px] font-mono">{allergyConflicts[0].record_b_date || '2026-02-05'}</span>
               </div>
-              <p className="text-slate-800 font-medium leading-relaxed">
+              <p className="text-slate-700 leading-relaxed font-medium">
                 {allergyConflicts[0].record_b_summary}
               </p>
               <div className="text-[11px] text-slate-500">
@@ -134,11 +147,11 @@ export function AllergiesView({
           </div>
 
           {/* Clinical Non-Auto-Resolution Notice */}
-          <div className="bg-white/80 p-3.5 rounded-xl border border-rose-200 text-xs text-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="bg-white/90 p-3.5 rounded-xl border border-indigo-200/70 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-rose-700 shrink-0" />
+              <Shield className="w-4 h-4 text-indigo-700 shrink-0" />
               <span>
-                <strong>Zero Silent Overwrite Guarantee:</strong> This conflict has NOT been auto-resolved. Clinician verification is required before prescribing.
+                <strong>Zero Silent Overwrite Guarantee:</strong> Both records are preserved for patient safety. Physician confirmation is required.
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -146,9 +159,9 @@ export function AllergiesView({
                 variant="outline"
                 size="sm"
                 onClick={() => handleReviewConflictEvidence(allergyConflicts[0])}
-                className="bg-white border-rose-300 text-rose-800 hover:bg-rose-100/50"
+                className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
               >
-                <FileText className="w-3.5 h-3.5 mr-1" />
+                <FileText className="w-3.5 h-3.5 mr-1 text-teal-600" />
                 Review Evidence
               </Button>
               {onNavigateToConflictCenter && (
@@ -156,10 +169,10 @@ export function AllergiesView({
                   variant="primary"
                   size="sm"
                   onClick={onNavigateToConflictCenter}
-                  className="bg-rose-700 hover:bg-rose-800 text-white"
+                  className="bg-indigo-700 hover:bg-indigo-800 text-white"
                 >
                   <UserCheck className="w-3.5 h-3.5 mr-1" />
-                  Conflict Center
+                  Reconciliation Center
                 </Button>
               )}
             </div>
@@ -170,7 +183,7 @@ export function AllergiesView({
       {/* Allergies List */}
       <div className="space-y-3">
         <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-          Recorded Allergies & Intolerances
+          Recorded Allergies & Intolerances ({allergies.length})
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -180,11 +193,7 @@ export function AllergiesView({
             return (
               <div
                 key={allergy.id || allergy.allergen}
-                className={`p-5 rounded-2xl border transition-all ${
-                  hasConflict
-                    ? 'bg-rose-50/50 border-rose-300 shadow-xs'
-                    : 'bg-white border-slate-200'
-                }`}
+                className="p-5 rounded-2xl border border-slate-200/90 bg-white hover:border-slate-300 transition-all shadow-2xs space-y-3"
               >
                 <div className="flex items-start justify-between gap-2 pb-3 border-b border-slate-100">
                   <div className="space-y-1">
@@ -193,8 +202,8 @@ export function AllergiesView({
                         {allergy.allergen}
                       </h3>
                       {hasConflict && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-100 text-rose-800 border border-rose-200">
-                          Disputed Record
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200">
+                          Reconciliation Pending
                         </span>
                       )}
                     </div>
@@ -207,9 +216,9 @@ export function AllergiesView({
                   <Badge
                     variant={
                       allergy.severity === 'Critical' || allergy.severity === 'High'
-                        ? 'rose'
-                        : allergy.severity === 'Medium'
                         ? 'amber'
+                        : allergy.severity === 'Medium'
+                        ? 'neutral'
                         : 'slate'
                     }
                     size="sm"
@@ -218,7 +227,7 @@ export function AllergiesView({
                   </Badge>
                 </div>
 
-                <div className="py-3 text-xs space-y-2 text-slate-600">
+                <div className="py-2 text-xs space-y-2 text-slate-600">
                   <div className="flex justify-between">
                     <span className="text-slate-400">Reported Date:</span>
                     <span className="font-medium text-slate-800">{allergy.reported_date || '2024-05-10'}</span>

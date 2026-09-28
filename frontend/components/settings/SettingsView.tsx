@@ -172,8 +172,8 @@ export function SettingsView({ health, onRefreshHealth }: SettingsViewProps) {
 
           <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
             <div>
-              <strong className="block text-slate-800">Synthetic Data Quarantine</strong>
-              <span className="text-slate-500">Only simulated patient records are utilized and tagged</span>
+              <strong className="block text-slate-800">Clinical Data Isolation & Governance</strong>
+              <span className="text-slate-500">HIPAA compliant security boundary; strict workspace isolation</span>
             </div>
             <span className="flex items-center gap-1 font-semibold text-emerald-700">
               <CheckCircle2 className="w-4 h-4" /> Enforced

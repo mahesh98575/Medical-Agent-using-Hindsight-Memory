@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { History, Calendar, FileText, Clock, AlertTriangle, Pill, ShieldAlert, Activity, CheckCircle } from 'lucide-react';
+import { History, Calendar, FileText, Clock, GitCompare, Pill, ShieldAlert, Activity, CheckCircle } from 'lucide-react';
 import { TimelineEvent, EvidenceDetail, MemoryStatus } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -18,7 +18,7 @@ export function TimelineView({ events, onReviewEvidence }: TimelineViewProps) {
     { id: 'all', label: 'All Events' },
     { id: 'medication', label: 'Medications', icon: Pill },
     { id: 'allergy', label: 'Allergies', icon: ShieldAlert },
-    { id: 'conflict', label: 'Conflicts', icon: AlertTriangle },
+    { id: 'conflict', label: 'Reconciliation', icon: GitCompare },
     { id: 'symptom', label: 'Symptoms', icon: Activity },
     { id: 'recommendation', label: 'Recommendations', icon: CheckCircle },
   ];
@@ -47,7 +47,7 @@ export function TimelineView({ events, onReviewEvidence }: TimelineViewProps) {
   const getCategoryBadgeVariant = (category: string) => {
     switch (category.toLowerCase()) {
       case 'conflict':
-        return 'rose';
+        return 'amber';
       case 'medication':
         return 'teal';
       case 'allergy':
@@ -120,12 +120,12 @@ export function TimelineView({ events, onReviewEvidence }: TimelineViewProps) {
               <div
                 className={`absolute -left-6 sm:-left-8 top-1.5 w-6 sm:w-8 h-6 sm:h-8 rounded-full border-2 bg-white flex items-center justify-center transition-all ${
                   isConflict
-                    ? 'border-rose-500 text-rose-600 shadow-xs'
+                    ? 'border-indigo-400 text-indigo-700 shadow-2xs'
                     : 'border-teal-500 text-teal-600'
                 }`}
               >
                 {isConflict ? (
-                  <AlertTriangle className="w-3 h-3 text-rose-600" />
+                  <GitCompare className="w-3 h-3 text-indigo-700" />
                 ) : (
                   <div className="w-2 h-2 rounded-full bg-teal-600" />
                 )}
@@ -135,7 +135,7 @@ export function TimelineView({ events, onReviewEvidence }: TimelineViewProps) {
               <div
                 className={`p-5 rounded-2xl border transition-all ${
                   isConflict
-                    ? 'bg-rose-50/40 border-rose-300'
+                    ? 'bg-indigo-50/20 border-indigo-200/90'
                     : 'bg-white border-slate-200 group-hover:border-slate-300'
                 }`}
               >
